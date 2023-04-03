@@ -2,6 +2,8 @@ package Linked;
 
 import org.w3c.dom.Node;
 
+import java.util.Stack;
+
 public class LinkedDemo {
     public static void main(String[] args) {
         //创建节点
@@ -38,8 +40,17 @@ public class LinkedDemo {
         System.out.println(NodeLength(sll.getHead()));
 
         //测试获取倒数的元素
-        SingleNode singleNode = searchIndexNode(sll.getHead(),1);
-        System.out.println(singleNode);
+//        SingleNode singleNode = searchIndexNode(sll.getHead(),1);
+//        System.out.println(singleNode);
+
+        System.out.println("反转之前的链表");
+        sll.list();
+
+        System.out.println("反转之后的链表");
+//        reverseLinked(sll.getHead());
+//        sll.list();
+        System.out.println("逆序打印");
+        reversePrint(sll.getHead());
 
 
     }
@@ -78,6 +89,62 @@ public class LinkedDemo {
         }
         return temp;
 
+
+    }
+
+    public static void reversePrint(SingleNode head){
+        if(head.next == null){
+            return;
+        }
+        Stack<SingleNode> stack = new Stack<SingleNode>();
+        SingleNode cur = head.next;
+        while(cur != null){
+            stack.push(cur);
+            cur = cur.next;
+        }
+
+        while(stack.size() > 0) {
+            System.out.println(stack.pop());
+        }
+
+    }
+
+    public static void mergeLinked(SingleNode s1,SingleNode s2){
+        SingleNode singleNode = new SingleNode(0,"","");
+        while(s1.next != null && s2.next != null) {
+            if(s1.no < s2.no){
+                singleNode.next = s1.next;
+                s1 = s1.next;
+            }else {
+                singleNode.next = s2.next;
+                s2 = s2.next;
+            }
+            singleNode = singleNode.next;
+        }
+
+    }
+
+    public static void reverseLinked(SingleNode head){
+        //如果当前链表为空或者仅仅只有一个元素的时候不需要反转链表
+        if(head.next == null || head.next.next == null) {
+            return ;
+        }
+        //定义一个辅助节点用来遍历链表
+        SingleNode cur = head.next;
+        //定义下一个节点
+        SingleNode next = null;
+        SingleNode reverselink = new SingleNode(0,"","");
+        while(cur != null){
+            //展示保存cur的下一个节点
+            next = cur.next;
+            //让cur的下一个节点放入反转链表中
+            cur.next = reverselink.next;
+
+            reverselink.next = cur;
+            //让cur进行后移
+            cur = next;
+        }
+        head.next = reverselink.next;
 
     }
 
