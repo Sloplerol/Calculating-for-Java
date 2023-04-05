@@ -279,9 +279,320 @@
 
 # 链表篇
 
+### 移除链表元素
 
+* 思路
 
+    `第一种可能：头信息里值是否和需要删除的值相等`
 
+    `第二种可能：头信息里没有目标值，再去从head.next开始遍历，如果遍历到这个值的话，head.next = head.next.next`
+
+- [ ] 单向链表实现
+
+    ```
+    public ListNode removeElements(ListNode head, int val) {
+            //当头节点里的信息的值为val
+            while (head != null && head.val == val) {
+                head = head.next;
+            }
+            // 已经为null，提前退出
+            if (head == null) {
+                return head;
+            }
+            ListNode pre = head;
+            ListNode cur = head.next;
+            while(cur != null){
+                if(cur.val == val){
+                    pre.next = cur.next;
+                }else {
+                    pre = cur;
+                }
+                cur = cur.next;
+            }
+            return head;
+            
+            
+            
+        }
+    ```
+
+- [ ] 虚拟头节点来解决(统一规则，不需要判断删除的是否是头节点)
+
+    ```
+    public ListNode removeElements(ListNode head, int val) {
+            if(head == null){
+                return head;
+            }
+            //设置虚拟头节点
+            ListNode dummys = new ListNode(-1,head);
+            ListNode pre = dummys;
+            ListNode cur = head;
+            while(cur != null){
+                if(cur.val == val){
+                    pre.next = cur.next;
+                }else {
+                    pre = cur;
+                }
+                cur = cur.next;
+                
+            }
+            //可以之前头节点的元素已经被删除
+            return dummys.next;
+            
+            
+            
+        }
+    ```
+
+### 反转链表
+
+* 双指针
+
+    `定义一个cur指针指向的是当前所处的节点，再定义一个pre指向cur的前一个节点，然后cur，和pre两个指针后移，知道cur等于空为止，此时取pre作为新链表的头节点`
+
+- [ ] 代码
+
+    ```
+    public ListNode reverseList(ListNode head) {
+            ListNode cur = head;
+            ListNode pre = null;
+            while(cur != null){
+                ListNode next = cur.next;
+                cur.next = pre;
+                pre = cur;
+                cur = next;
+            }
+            //当cur等于null的时候 pre充当新链表的头节点
+            return pre;
+            
+        }
+    ```
+
+* 递归解决
+
+    `思路和双指针一样通过递归可以不用重写后移操作`
+
+- [ ] 代码
+
+    ```
+    public ListNode reverseList(ListNode head) {
+        
+            return reverse(null,head);
+            
+        }
+    
+        private ListNode reverse(ListNode pre,ListNode cur){
+            if(cur == null){
+                return pre;
+            }
+            //保存一下下一个节点
+            ListNode next = cur.next;
+            //改变方向
+            cur.next = pre;
+    
+            return reverse(cur,next);
+        }
+    ```
+
+### 两两交换链表中的元素
+
+* 思路
+
+    `创建虚拟头节点，通过虚拟头节点来操作下两个元素，再将cur定位到下两个元素的前面`
+
+- [ ] 代码
+
+    ```
+    public ListNode swapPairs(ListNode head) {
+            ListNode dumyhead = new ListNode(-1);
+            dumyhead.next = head;
+            ListNode cur = dumyhead;
+            //奇数和偶数的两种情况
+            while(cur.next != null && cur.next.next != null){
+                ListNode temp = cur.next;
+                cur.next = cur.next.next;
+                ListNode temp1 = cur.next.next;
+                cur.next.next = temp;
+                temp.next = temp1;
+                //首先通过虚拟头节点操作12 再通过3的前一位再来操作34
+                cur = cur.next.next;
+            }
+            return dumyhead.next;
+            
+        }
+    ```
+
+### 删除倒数第n个节点
+
+* 思路
+
+    `可以定义快慢指针来解决，快指针用来提前移动(这一步一定要定好，保证最后慢指针指向的是倒数n个节点的前一个)，然后再让快慢指针同时移动，知道fast==null的时候停止，然后通过slow来删除他的下一位节点`
+
+- [ ] 代码
+
+    ```
+    public ListNode removeNthFromEnd(ListNode head, int n) {
+            ListNode dumphead = new ListNode(0);
+            dumphead.next = head;
+            ListNode fast = dumphead;
+            ListNode slow = dumphead;
+            //先让fast指针进行后移操作
+            for(int i = 0;i < n;i++){
+                fast = fast.next;
+            }
+    
+            while(fast.next != null){
+                fast = fast.next;
+                slow = slow.next;
+            }
+            slow.next = slow.next.next;
+            return dumphead.next;
+            
+            
+            
+        }
+    ```
+
+### 环形链表
+
+* 思路
+
+    `因为这道题可以构建环，于是可以通过快慢指针来判断是否有环，接着判断相遇的可能，通过算数计算可以得到head和相遇点到入环点的距离相同，计算出最后的结果`
+
+- [ ] 代码
+
+    ```
+    public ListNode detectCycle(ListNode head) {
+            ListNode slow = head;
+            ListNode fast = head;
+            //判断是否有环
+            while(fast != null && fast.next != null){
+                //定义快慢指针
+                slow = slow.next;
+                fast = fast.next.next;
+                //通过相遇点来计算出索引节点的长度
+                if(slow == fast){
+                    ListNode index1 = fast;
+                    ListNode index2 = head;
+                    while(index1 != index2){
+                        index1 = index1.next;
+                        index2 = index2.next;
+                    }
+                    return index1;
+                }
+            }
+            return null;
+        }
+    ```
+
+### 设计链表
+
+- [ ] 代码
+
+    ```
+    class ListNode{
+        int val;
+        ListNode next;
+        ListNode(){}
+        
+        ListNode(int val){
+            this.val = val;
+        }
+    }
+    
+    class MyLinkedList {
+        //定义链表的长度
+        int size = 0;
+        //定义虚拟头节点
+        ListNode head;
+        public MyLinkedList() {
+            size = 0;
+            head = new ListNode(0);
+        }
+        
+        public int get(int index) {
+            if(index < 0 || size <= index){
+                return -1;
+            }
+            //遍历链表
+            ListNode currentNode = head;
+            for(int i = 0;i<=index;i++){
+                currentNode = currentNode.next;
+            }
+            return currentNode.val;
+        }
+        
+        public void addAtHead(int val) {
+            ListNode newNode = new ListNode(val);
+            newNode.next = head.next;
+            head.next = newNode;
+            size++;
+        }
+        
+        public void addAtTail(int val) {
+            ListNode pre = head;
+            ListNode newNode = new ListNode(val);
+            while(pre.next != null){
+                pre = pre.next;
+            }
+            size++;
+            newNode.next = pre.next;
+            pre.next = newNode;
+            
+            
+            
+        }
+        
+        public void addAtIndex(int index, int val) {
+    
+            if(index > size){
+                return;
+            }
+    
+            if(index < 0){
+                index = 0;
+            }
+            size++;
+            
+            ListNode prev = head;
+            ListNode newNode = new ListNode(val);
+            for(int i = 0;i<index;i++){
+                prev = prev.next;
+            }
+            newNode.next = prev.next;
+            prev.next = newNode;
+            
+            
+        }
+        
+        public void deleteAtIndex(int index) {
+            if(index >= size || index < 0){
+                return;
+            }
+            size--;
+            //如果要删除的是头节点那么直接head后移
+            if(index == 0){
+                head = head.next;
+                return;
+            }
+            
+            ListNode prev = head;
+            
+            for(int i = 0;i < index;i++){
+                prev = prev.next;
+            }
+            prev.next = prev.next.next;
+        }
+    }
+    ```
+
+# 哈希表
+
+- [ ] 
+- [ ] dsf
+- [ ] sdf
+- [ ] dsf
+- [ ] dsf
 
 
 

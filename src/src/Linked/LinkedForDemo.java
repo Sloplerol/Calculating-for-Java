@@ -1,5 +1,7 @@
 package Linked;
 
+import java.util.Stack;
+
 public class LinkedForDemo {
     public static void main(String[] args) {
         HeroNode hero1 = new HeroNode(1,"No1","啥地方");
@@ -8,17 +10,90 @@ public class LinkedForDemo {
         HeroNode hero4 = new HeroNode(4,"No1","啥地方");
 
         LinkedListForSingle linkedListForSingle = new LinkedListForSingle();
-        linkedListForSingle.addByOrder(hero2);
         linkedListForSingle.addByOrder(hero3);
-        linkedListForSingle.addByOrder(hero4);
         linkedListForSingle.addByOrder(hero1);
+        linkedListForSingle.addByOrder(hero2);
+        linkedListForSingle.addByOrder(hero4);
 
-        HeroNode newHero = new HeroNode(1,"sfd","dsfsdf");
-        linkedListForSingle.update(newHero);
+
         linkedListForSingle.list();
 
-        linkedListForSingle.delete(hero1);
-        linkedListForSingle.list();
+        int result = getLength(linkedListForSingle.getHead());
+        System.out.println(result);
+
+
+        reversePrint(linkedListForSingle.getHead());
+
+
+
+
+    }
+
+    public static int getLength(HeroNode head){
+        //通过传入的头节点来判断节点的长度
+        if(head == null){
+            return 0;
+        }
+        HeroNode cur = head.next;
+        int length = 0;
+        while(cur!=null){
+            length++;
+            cur = cur.next;
+        }
+        return length;
+    }
+
+
+    public static HeroNode reverseIndex(HeroNode head,int index){
+        if(head == null){
+            System.out.println("链表为空");
+            return null;
+        }
+        int size = getLength(head);
+        if(index <= 0 || index > size){
+            return null;
+        }
+        HeroNode cur = head.next;
+        for(int i = 0;i<size - index;i++){
+            cur = cur.next;
+        }
+        return cur;
+
+    }
+
+
+    public static void reverseLinked(HeroNode head){
+        if(head.next == null || head.next.next == null){
+            return;
+        }
+        HeroNode cur = head.next;
+        HeroNode next = null;
+        HeroNode reverselist = new HeroNode(0,"","");
+        while(cur != null){
+            next = cur.next;
+            //reverseList是不动的 放到reverselist最前端
+            cur.next = reverselist.next;
+            //将cur链接到反转的链表上
+            reverselist.next = cur;
+            cur = next;
+        }
+        head.next = reverselist.next;
+    }
+
+    public static void reversePrint(HeroNode head){
+        if(head.next == null){
+            return;
+        }
+        Stack<HeroNode> stack = new Stack<HeroNode>();
+        HeroNode cur = head.next;
+        while(cur != null){
+            stack.push(cur);
+            cur = cur.next;
+        }
+
+        while(stack.size() > 0){
+            System.out.println(stack.pop());
+        }
     }
 
 
@@ -30,7 +105,9 @@ class LinkedListForSingle{
     //初始化头节点
     private HeroNode head = new HeroNode(0,"","");
 
-
+    public HeroNode getHead() {
+        return head;
+    }
 
     public void add(HeroNode heroNode){
         //通过辅助指针进行遍历节点
@@ -150,6 +227,9 @@ class LinkedListForSingle{
         }else {
             heroNode.next = cur.next;
             cur.next = heroNode;
+
+            heroNode.pre = cur;
+            cur.next.pre = heroNode;
         }
 
 
