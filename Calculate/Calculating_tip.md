@@ -210,7 +210,7 @@ nextLine缺点:在使用 scanner.nextInt() 读取整数后，输入缓冲区中�
 
     
 
-* sdfdsf
+* 数组去重
 
 * sdf
 

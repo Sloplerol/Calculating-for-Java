@@ -124,9 +124,9 @@
 
 ### 滑动数组
 
-* 暴力
+* 思路
 
-* 思路: 一个for循环来解决，里面的变量代表了结束的位置right，left设置为0，先去从0开始遍历发现sum值如果大于目标值，通过循环来移动left判断减left是否满足条件，从而达到连续数组缩减长度的效果
+    `一个for循环来解决，里面的变量代表了结束的位置right，left设置为0，先去从0开始遍历发现sum值如果大于目标值，通过循环来移动left判断减left是否满足条件，从而达到连续数组缩减长度的效果`
 
 - [ ] 暴力解法
 
@@ -260,20 +260,6 @@
     }
     
     ```
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -588,11 +574,294 @@
 
 # 哈希表
 
-- [ ] 
-- [ ] dsf
-- [ ] sdf
-- [ ] dsf
-- [ ] dsf
+### 有效的字母异位词
+
+* 思路
+
+    `由于字母之间ASCII的值都是连续的所以可以创建一个26位的数组，让每一位的ASCII值都-a的ASCII值，从而每个字母有与之对应的下角标，遍历第一个字符串，将每一个值的个数++，遍历第二个字符串，每一个值对应的个数--，判断最后是否数组都是0`
+
+- [ ] 代码
+
+    ```
+    char[] arr1 = s.toCharArray();
+            char[] arr2 = t.toCharArray();
+            int[] arr = new int[26];
+    
+            for(int i = 0;i < arr1.length;i++){
+                arr[arr1[i] - 'a']++;
+            }
+    
+            for(int j = 0;j < arr2.length;j++){
+                arr[arr2[j] - 'a']--;
+            }
+    
+            for(int data : arr){
+                if(data != 0){
+                    return false;
+                }
+            }
+            return true;
+    ```
+
+### 两个数组的交集
+
+* 思路
+
+    `可以将数组里的所有元素添加到HashSet集合中，在此集合中元素不能重复，通过集合的contains方法判断另一个数组中是否有这个元素，如果有将它添加到另一个Set集合中最后通过`
+
+- [ ] 代码
+
+    ```
+    public int[] intersection(int[] nums1, int[] nums2) {
+            //判断集合不可能存在的情况
+            if(nums1 == null || nums1.length == 0 || nums2 == null || nums2.length == 0){
+                return new int[0];
+            }
+            //设置哈希表
+            Set<Integer> set = new HashSet<>();
+            for(int i : nums1){
+                set.add(i);
+            }
+            Set<Integer> newset = new HashSet<>();
+            //用nums2进行比对
+            for(int i = 0;i<nums2.length;i++){
+                if(set.contains(nums2[i])){
+                    newset.add(nums2[i]);
+                }
+            }
+    
+            //将set转化为数组
+            int[] newarr = new int[newset.size()];
+            int index = 0;
+            for(int data : newset){
+                newarr[index++] = data;
+            }
+    
+            return newarr;
+            
+        }
+    ```
+
+**在这里比较重要的就是数组去重操作，这里通过定义Set集合来解决的, 最后需要将set集合转化成int类型的数组，set转化为数组可以借助set.toArray(空数组),这个空数组的长度必须等于set集合的长度**
+
+### 两数之和
+
+* 思路
+
+    `由于是在数组中查找两个元素，可以想到用集合中的map来解决，通过判断map里面是否有另一半来解决`
+
+- [ ] 代码
+
+    ```
+    public int[] twoSum(int[] nums, int target) {
+            int[] arr = new int[2];
+            //判断数组是否为空
+            if(nums == null || nums.length == 0){
+                return arr;
+            }
+            //创建map集合
+            Map<Integer,Integer> map = new HashMap<>();
+            //遍历nums如果有与之对应的值就将其取出否则就存入到map集合中
+            for(int i = 0;i<nums.length;i++){
+                int temp = target - nums[i];
+                if(map.containsKey(temp)){
+                    arr[0] = map.get(temp);
+                    arr[1] = i;
+                }
+                
+                map.put(nums[i],i);
+            }
+            return arr;
+            
+        }
+    ```
+
+### 四数相加
+
+* 思路
+
+    `首先将四个数组拆分为2 2的数组，减少时间复杂度，然后将一对数组的value值相加，作为Map的key值，value值对应的是你出现的次数，然后计算另外一对数组的值，map里查找如果发现有-key值那么统计此次的次数加到count上`
+
+- [ ] 代码
+
+    ```
+    public int fourSumCount(int[] nums1, int[] nums2, int[] nums3, int[] nums4) {
+            //由于题里给定的条件是数组不能为空所以无需判断
+            Map<Integer,Integer> map = new HashMap<>();
+            //通过哈希映射的方式为每个结果key++
+            int temp = 0;
+            for(int i : nums1){
+                for(int j : nums2){
+                    temp = i + j;
+                    if(map.containsKey(temp)){
+                        map.put(temp,map.get(temp)+1);
+                    }else {
+                        map.put(temp,1);
+                    }
+                }
+            }
+            int target = 0;
+            int count = 0;
+            for(int i : nums3){
+                for(int j : nums4){
+                    target = 0 - (i + j); 
+                    if(map.containsKey(target)){
+                        count += map.get(target);
+                    }
+                }
+            }
+            return count;
+        }
+    ```
+
+### 三数之和
+
+* 思路
+
+    `双指针，遍历数组，第一个数充当i，left作为i + 1 ，right作为length  - 1,两个指针不断向中间靠拢,i left和right都需要去重`
+
+- [ ] 代码
+
+    ```
+    public List<List<Integer>> threeSum(int[] nums) {
+            Arrays.sort(nums);
+            List<List<Integer>> result = new ArrayList<>();
+            for(int i = 0;i<nums.length;i++){
+                if(nums[0] > 0){
+                    return result;
+                }
+    
+                if(i > 0 && nums[i] == nums[i-1]){
+                    continue;
+                }
+                int left = i + 1;
+                int right = nums.length - 1;
+                while(right > left){
+                    int sum = nums[i] + nums[left] + nums[right];
+                    if(sum < 0){
+                        left++;
+                    }else if(sum > 0){
+                        right--;
+                    }else {
+                        result.add(Arrays.asList(nums[i],nums[left],nums[right]));
+                        while(right > left && nums[right] == nums[right - 1]){
+                            right--;
+                        }
+    
+                        while(right > left && nums[left] == nums[left + 1]){
+                            left++;
+                        }
+    
+                        right--;
+                        left++;
+                    }
+                }
+            }
+            return result;
+            
+        }
+    ```
+
+### 四数之和
+
+* 思路
+
+    `和三数之和一样外层再套一个for循环，额外的操作：判断不可能的情况，这次不是直接让nums[i] > target了，因为两个负数加起来可能还是负数`
+
+- [ ] 代码
+
+    ```
+    public List<List<Integer>> fourSum(int[] nums, int target) {
+            Arrays.sort(nums);
+            List<List<Integer>> result = new ArrayList<>();
+            for(int i = 0;i<nums.length;i++){
+                if(nums[i] > 0 && nums[i] > target){
+                    return result;
+                }
+                if(i > 0 && nums[i] == nums[i - 1]){
+                    continue;
+                }
+                for(int j = i + 1;j<nums.length;j++){
+                    if(j > i + 1 && nums[j] == nums[j - 1]){
+                        continue;
+                    }
+                    int left = j + 1;
+                    int right = nums.length - 1;
+                    while(right > left){
+                        int sum = nums[i] + nums[j] + nums[left] + nums[right];
+                        if(sum > target){
+                            right--;
+                        }else if(sum < target){
+                            left++;
+                        }else {
+                            result.add(Arrays.asList(nums[i],nums[j],nums[left],nums[right]));
+                            while(right > left && nums[right] == nums[right - 1]) right--;
+                            while(right > left && nums[left] == nums[left + 1]) left++;
+                            right--;
+                            left++;
+                        }
+                    }
+                }
+            }
+            return result;
+        }
+    ```
+
+# 字符串
+
+### 反转字符II
+
+* 思路
+
+    `由于题比较复杂，反转操作需要借助库里的方法，于是需要StringBuffer里的reverse方法用来反转2k元素的前k个元素，然后搭配substring截取字符串来解决这道问题`
+
+- [ ] 代码
+
+    ```
+    public String reverseStr(String s, int k) {
+            //由于不想手动写reverse这个方法直接借助StringBuffer的reverse方法
+            StringBuffer res = new StringBuffer();
+            int start = 0;
+            int length = s.length();
+            while(start < length){
+                StringBuffer temp = new StringBuffer();
+                
+                int firstK = start + k > length ? length : start + k;
+                int secondK = start + 2 * k > length ? length : start + 2 * k;
+                temp.append(s.substring(start,firstK));
+                res.append(temp.reverse());
+                
+                if(firstK < secondK){
+                    res.append(s.substring(firstK,secondK));
+                }
+                start += 2 * k;
+            }
+            return res.toString();
+        }
+    ```
+
+### 反转字母
+
+* 思路
+
+    `反转原字符串，再将字符串的每一个单词进行反转`
+
+- [ ] 代码
+
+    ```
+    
+    ```
+
+### KMP算法
+
+* 参考[此文章](https://www.ruanyifeng.com/blog/2013/05/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm.html)
+
+### 重复的子字符串
+
+* 暴力算法
+* KMP算法
+
+
 
 
 
