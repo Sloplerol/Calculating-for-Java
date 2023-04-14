@@ -55,10 +55,6 @@ public class Quick {
 
         }
         swap(arr,lo,right);
-
-
-
-
         return right;
     }
 }
